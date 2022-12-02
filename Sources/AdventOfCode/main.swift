@@ -2,7 +2,7 @@ import Foundation
 import Helpers
 
 print("Advent of Code 2022")
-
-for day in [Day01(inputString: Day01Input.Input)] {
+let days: [AoCPrintable] = [Day01(), Day02()]
+for day in days {
   day.prettyPrint()
 }
