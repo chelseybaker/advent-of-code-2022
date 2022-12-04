@@ -1,6 +1,6 @@
 //
 //  Day02Calculations.swift
-//  AdventOfCode2021Tests
+//  AdventOfCode2022Tests
 //
 //
 
