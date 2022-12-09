@@ -33,6 +33,10 @@ struct Day07: AoCPrintable {
   
   let inputString: String
   
+  init(inputString: String = Day07Input.Input) {
+    self.inputString = inputString
+  }
+  
   func calculatePart1() throws -> Int {
     var steps = inputString.components(separatedBy: "\n")
     

@@ -5,6 +5,10 @@ struct Day08: AoCPrintable {
   
   let inputString: String
   
+  init(inputString: String = Day08Input.Input) {
+    self.inputString = inputString
+  }
+  
   func calculatePart1() throws -> Int {
     let matrix: [[Int]] = inputString
       .components(separatedBy: "\n")

@@ -5,6 +5,10 @@ struct Day06: AoCPrintable {
   
   let inputString: String
   
+  init(inputString: String = Day06Input.Input) {
+    self.inputString = inputString
+  }
+  
   func calculatePart1() throws -> Int {
     calculatePacketStart(from: inputString, markerCount: 4)
   }
