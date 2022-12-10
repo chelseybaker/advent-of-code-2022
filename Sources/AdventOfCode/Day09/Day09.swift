@@ -26,33 +26,36 @@ struct Day09: AoCPrintable {
   }
   
   func calculatePart1() throws -> Int {
-    let steps = inputString.components(separatedBy: "\n")
-    
-    var knots = [Position(x: 0, y: 0), Position(x: 0, y: 0)]
-    
-    var tailPositions: Set<Position> = Set(arrayLiteral: knots[1])
-    
-    for step in steps {
-      let components = step.components(separatedBy: " ")
-      let direction = Direction(rawValue: components[0])!
-      let count = Int(components[1])!
-      
-      for _ in 0..<count {
-        knots[0] = newHeadPosition(knots[0], direction: direction)
-        
-        for index in 1..<knots.count {
-          knots[index] = newTrailingKnotPosition(knots[index], head: knots[index - 1], direction: direction)
-        }
-        
-        tailPositions.insert(knots[1])
-        
-      }
-    }
-    
-    return tailPositions.count
+    return doKnots(count: 2)
+//    let steps = inputString.components(separatedBy: "\n")
+//
+//    var knots = [Position(x: 0, y: 0), Position(x: 0, y: 0)]
+//
+//    var tailPositions: Set<Position> = Set(arrayLiteral: knots[1])
+//
+//    for step in steps {
+//      let components = step.components(separatedBy: " ")
+//      let direction = Direction(rawValue: components[0])!
+//      let count = Int(components[1])!
+//
+//      for _ in 0..<count {
+//        knots[0] = newHeadPosition(knots[0], direction: direction)
+//
+//        for index in 1..<knots.count {
+//          knots[index] = newTrailingKnotPosition(knots[index], head: knots[index - 1], direction: direction)
+//        }
+//
+//        tailPositions.insert(knots[1])
+//
+//      }
+//    }
+//
+//    return tailPositions.count
   }
   
   func calculatePart2() throws -> Int {
+    return doKnots(count: 10)
+    
     let steps = inputString.components(separatedBy: "\n")
     
     var knots = (0...9).map({ _ in Position(x: 0, y: 0) })
@@ -75,7 +78,7 @@ struct Day09: AoCPrintable {
         var direction = directionJustMoved(oldPosition: oldKnot1, newPosition: knots[1])
         
         for index in 2..<knots.count {
-          
+    
           if direction != nil {
             let oldKnot = knots[index]
             knots[index]  = newTrailingKnotPosition(knots[index], head: knots[index - 1], direction: direction!)
@@ -83,6 +86,59 @@ struct Day09: AoCPrintable {
           }
           
         }
+      }
+    }
+    
+    return tailPositions.count
+  }
+  
+  func doKnots(count: Int) -> Int {
+    let steps = inputString.components(separatedBy: "\n")
+    
+    var knots = (0..<count).map({ _ in Position(x: 0, y: 0) })
+    
+    let lastKnotPosition = count - 1
+    
+    var tailPositions: Set<Position> = Set(arrayLiteral: knots[lastKnotPosition])
+    printBoard(knots: knots)
+    
+    for step in steps {
+      print("STEP: \(step)")
+      let components = step.components(separatedBy: " ")
+      let direction = Direction(rawValue: components[0])!
+      let count = Int(components[1])!
+      
+      for _ in 0..<count {
+        // move the head
+        knots[0] = newHeadPosition(knots[0], direction: direction)
+        let oldKnot1 = knots[1]
+        let knewKnot1 = newTrailingKnotPosition(knots[1], head: knots[0], direction: direction)
+        
+        knots[1] = knewKnot1
+        // Problem with the direction because it moves diagnol
+        // and that shouldn't be a direction
+        var direction = directionJustMoved(oldPosition: oldKnot1, newPosition: knots[1])
+        
+        if let direction = direction {
+          print("Direction jsut moved for tail knot: \(direction)")
+        } else {
+          print("Tail knot did not move")
+        }
+       
+        if knots.count <= 2 {
+          tailPositions.insert(knots[lastKnotPosition])
+          continue
+        }
+        
+        for index in 2..<knots.count {
+          if direction != nil {
+            let oldKnot = knots[index]
+            knots[index]  = newTrailingKnotPosition(knots[index], head: knots[index - 1], direction: direction!)
+            direction = directionJustMoved(oldPosition: oldKnot, newPosition: knots[index])
+          }
+        }
+        
+        tailPositions.insert(knots[lastKnotPosition])
       }
     }
     
