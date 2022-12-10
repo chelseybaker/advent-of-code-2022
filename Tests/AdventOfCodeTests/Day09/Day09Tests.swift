@@ -2,7 +2,7 @@ import XCTest
 @testable import AdventOfCode
 
 class Day09Tests: XCTestCase {
-  func test_part1_practice() {
+  func test_part1_practice1() {
     let output = try? Day09(inputString: Day09Input.Practice).calculatePart1()
     XCTAssertEqual(output, 13)
   }
@@ -24,14 +24,7 @@ class Day09Tests: XCTestCase {
 
   func test_part2_input() {
     let output = try? Day09(inputString: Day09Input.Input).calculatePart2()
-    // 340 is too low
-    XCTAssertEqual(output, 0)
+    // 2352 is too low
+    XCTAssertEqual(output, 2369)
   }
-//
-//  func test_left() {
-//    let tail = Position(x: 0, y: 0)
-//    let head = Position(x: 10, y: 11)
-//  }
-  
-  
 }

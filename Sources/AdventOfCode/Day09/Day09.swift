@@ -26,122 +26,57 @@ struct Day09: AoCPrintable {
   }
   
   func calculatePart1() throws -> Int {
-    return doKnots(count: 2)
-//    let steps = inputString.components(separatedBy: "\n")
-//
-//    var knots = [Position(x: 0, y: 0), Position(x: 0, y: 0)]
-//
-//    var tailPositions: Set<Position> = Set(arrayLiteral: knots[1])
-//
-//    for step in steps {
-//      let components = step.components(separatedBy: " ")
-//      let direction = Direction(rawValue: components[0])!
-//      let count = Int(components[1])!
-//
-//      for _ in 0..<count {
-//        knots[0] = newHeadPosition(knots[0], direction: direction)
-//
-//        for index in 1..<knots.count {
-//          knots[index] = newTrailingKnotPosition(knots[index], head: knots[index - 1], direction: direction)
-//        }
-//
-//        tailPositions.insert(knots[1])
-//
-//      }
-//    }
-//
-//    return tailPositions.count
+    return try doKnots(count: 2)
   }
   
   func calculatePart2() throws -> Int {
-    return doKnots(count: 10)
-    
-    let steps = inputString.components(separatedBy: "\n")
-    
-    var knots = (0...9).map({ _ in Position(x: 0, y: 0) })
-    
-    let tailPositions: Set<Position> = Set(arrayLiteral: knots[9])
-    printBoard(knots: knots)
-    
-    for step in steps {
-      let components = step.components(separatedBy: " ")
-      let direction = Direction(rawValue: components[0])!
-      let count = Int(components[1])!
-
-      
-      for _ in 0..<count {
-        // move the head
-        knots[0] = newHeadPosition(knots[0], direction: direction)
-        
-        let oldKnot1 = knots[1]
-        knots[1] = newTrailingKnotPosition(knots[1], head: knots[0], direction: direction)
-        var direction = directionJustMoved(oldPosition: oldKnot1, newPosition: knots[1])
-        
-        for index in 2..<knots.count {
-    
-          if direction != nil {
-            let oldKnot = knots[index]
-            knots[index]  = newTrailingKnotPosition(knots[index], head: knots[index - 1], direction: direction!)
-            direction = directionJustMoved(oldPosition: oldKnot, newPosition: knots[index])
-          }
-          
-        }
-      }
-    }
-    
-    return tailPositions.count
+    return try doKnots(count: 10)
   }
   
-  func doKnots(count: Int) -> Int {
+  func doKnots(count: Int) throws -> Int {
     let steps = inputString.components(separatedBy: "\n")
     
     var knots = (0..<count).map({ _ in Position(x: 0, y: 0) })
     
+    printBoard(knots: knots)
+    
+    // Always position of the last knot in the array
     let lastKnotPosition = count - 1
     
     var tailPositions: Set<Position> = Set(arrayLiteral: knots[lastKnotPosition])
-    printBoard(knots: knots)
     
     for step in steps {
-      print("STEP: \(step)")
-      let components = step.components(separatedBy: " ")
-      let direction = Direction(rawValue: components[0])!
-      let count = Int(components[1])!
+      print("Step \(step)")
+      let direction = Direction(rawValue: step.components(separatedBy: " ")[0])!
+      let count = Int(step.components(separatedBy: " ")[1])!
       
       for _ in 0..<count {
-        // move the head
         knots[0] = newHeadPosition(knots[0], direction: direction)
-        let oldKnot1 = knots[1]
-        let knewKnot1 = newTrailingKnotPosition(knots[1], head: knots[0], direction: direction)
         
-        knots[1] = knewKnot1
-        // Problem with the direction because it moves diagnol
-        // and that shouldn't be a direction
-        var direction = directionJustMoved(oldPosition: oldKnot1, newPosition: knots[1])
-        
-        if let direction = direction {
-          print("Direction jsut moved for tail knot: \(direction)")
-        } else {
-          print("Tail knot did not move")
-        }
-       
-        if knots.count <= 2 {
-          tailPositions.insert(knots[lastKnotPosition])
-          continue
-        }
-        
-        for index in 2..<knots.count {
-          if direction != nil {
-            let oldKnot = knots[index]
-            knots[index]  = newTrailingKnotPosition(knots[index], head: knots[index - 1], direction: direction!)
-            direction = directionJustMoved(oldPosition: oldKnot, newPosition: knots[index])
+        for index in 1..<knots.count {
+          var newIndexKnotPosition = try newTrailingKnotPosition(knots[index], head: knots[index - 1])
+         
+          if index == lastKnotPosition {
+            tailPositions.insert(newIndexKnotPosition)
           }
+          
+          while !tailDoesNotNeedToMove(tail: newIndexKnotPosition, head: knots[index - 1]) {
+            newIndexKnotPosition = try newTrailingKnotPosition(newIndexKnotPosition, head: knots[index - 1])
+            if index == lastKnotPosition {
+              tailPositions.insert(newIndexKnotPosition)
+            }
+          }
+          
+          knots[index] = newIndexKnotPosition
         }
         
         tailPositions.insert(knots[lastKnotPosition])
       }
+      
+      //printBoard(knots: knots)
     }
     
+    //printLastKnotTrail(knotPositions: tailPositions)
     return tailPositions.count
   }
   
@@ -154,15 +89,34 @@ struct Day09: AoCPrintable {
     }
   }
   
-  func newTrailingKnotPosition(_ tail: Position, head: Position, direction: Direction) -> Position {
+  func newTrailingKnotPosition(_ tail: Position, head: Position) throws -> Position {
     if tailDoesNotNeedToMove(tail: tail, head: head) { return tail }
-
-    switch direction {
-    case .Right: return Position(x: head.x - 1, y: head.y)
-    case .Left: return Position(x: head.x + 1, y: head.y)
-    case .Up: return Position(x: head.x, y: head.y - 1)
-    case .Down: return Position(x: head.x, y: head.y + 1)
+    
+    if head.x == tail.x {
+      if head.y > tail.y {
+        return Position(x: tail.x, y: tail.y + 1)
+      } else {
+        return Position(x: tail.x, y: tail.y - 1)
+      }
+    } else if head.y == tail.y {
+      if head.x > tail.x {
+        return Position(x: tail.x + 1, y: tail.y)
+      } else {
+        return Position(x: tail.x - 1, y: tail.y)
+      }
     }
+    
+    if head.x > tail.x && head.y > tail.y {
+      return Position(x: tail.x + 1, y: tail.y + 1)
+    } else if head.x < tail.x && head.y < tail.y {
+      return Position(x: tail.x - 1, y: tail.y - 1)
+    } else if head.x > tail.x && head.y < tail.y {
+      return Position(x: tail.x + 1, y: tail.y - 1)
+    } else if head.x < tail.x && head.y > tail.y {
+      return Position(x: tail.x - 1, y: tail.y + 1)
+    }
+    
+    throw AoCError.GeneralError("Could not determine position")
     
   }
   
@@ -180,7 +134,7 @@ struct Day09: AoCPrintable {
     let highY = knots.map({ $0.y }).sorted().last! + 1
     
     
-    for y in stride(from: highY, to: lowY, by: -1) {
+    for y in stride(from: highY + 1, to: lowY - 1, by: -1) {
       let printable = (lowX...highX).map({ x in
         let posish = Position(x: x, y: y)
         if let index = knots.firstIndex(of: posish) {
@@ -196,12 +150,23 @@ struct Day09: AoCPrintable {
     }
   }
   
-  private func directionJustMoved(oldPosition: Position, newPosition: Position) -> Direction? {
-    if oldPosition == newPosition { return nil }
-    if newPosition.x > oldPosition.x { return .Right }
-    if newPosition.x < oldPosition.x { return .Left }
-    if newPosition.y > oldPosition.y { return .Up }
-    if newPosition.y < oldPosition.y { return .Down }
-    return nil
+  func printLastKnotTrail(knotPositions: Set<Position>) {
+    let knotsArray = Array(knotPositions).sorted(by: { $0.x < $1.x && $0.y < $1.y})
+    
+    let lowX = knotsArray.map({ $0.x }).sorted().first! - 1
+    let highX = knotsArray.map({ $0.x }).sorted().last! + 1
+    let lowY = knotsArray.map({ $0.y }).sorted().first! - 1
+    let highY = knotsArray.map({ $0.y }).sorted().last! + 1
+    
+    
+    for y in stride(from: highY + 1, to: lowY - 1, by: -1) {
+      let printable = (lowX...highX).map({ x in
+        let posish = Position(x: x, y: y)
+        if knotsArray.contains(posish) { return "#" }
+        return "."
+      }).joined()
+      
+      print(printable)
+    }
   }
 }
