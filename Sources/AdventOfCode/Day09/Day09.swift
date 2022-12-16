@@ -1,7 +1,7 @@
 import Foundation
 import Helpers
 
-struct Position: Hashable {
+fileprivate struct Position: Hashable {
   let x: Int
   let y: Int
   
@@ -10,7 +10,7 @@ struct Position: Hashable {
   }
 }
 
-enum Direction: String {
+fileprivate enum Direction: String {
   case Right = "R"
   case Up = "U"
   case Left = "L"
@@ -89,7 +89,7 @@ struct Day09: AoCPrintable {
     }
   }
   
-  func newTrailingKnotPosition(_ tail: Position, head: Position) throws -> Position {
+  fileprivate func newTrailingKnotPosition(_ tail: Position, head: Position) throws -> Position {
     if tailDoesNotNeedToMove(tail: tail, head: head) { return tail }
     
     if head.x == tail.x {
@@ -150,7 +150,7 @@ struct Day09: AoCPrintable {
     }
   }
   
-  func printLastKnotTrail(knotPositions: Set<Position>) {
+  fileprivate func printLastKnotTrail(knotPositions: Set<Position>) {
     let knotsArray = Array(knotPositions).sorted(by: { $0.x < $1.x && $0.y < $1.y})
     
     let lowX = knotsArray.map({ $0.x }).sorted().first! - 1

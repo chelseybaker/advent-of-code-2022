@@ -22,4 +22,5 @@ class Day11Tests: XCTestCase {
     let output = Scratch11Day(Day11Input.Input).calculatePart2()
     XCTAssertEqual(output, 2713310158)
   }
+
 }
