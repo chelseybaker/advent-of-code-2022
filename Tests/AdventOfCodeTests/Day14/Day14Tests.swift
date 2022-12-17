@@ -22,10 +22,10 @@ class Day14Tests: XCTestCase {
 //    XCTAssertEqual(output, 0)
 //  }
   
-  func test_parseInput() {
-    let rocks = try? Day14(inputString: Day14Input.Practice).parseInput()
-    XCTAssertEqual(rocks?.count, 2)
-    XCTAssertEqual(rocks![0].points.count, 3)
-    XCTAssertEqual(rocks![1].points.count, 4)
-  }
+//  fileprivate func test_parseInput() {
+//    let rocks = try? Day14(inputString: Day14Input.Practice).parseInput()
+//    XCTAssertEqual(rocks?.count, 2)
+//    XCTAssertEqual(rocks![0].points.count, 3)
+//    XCTAssertEqual(rocks![1].points.count, 4)
+//  }
 }

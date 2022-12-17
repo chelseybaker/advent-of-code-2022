@@ -11,7 +11,7 @@ struct Day14: AoCPrintable {
     let rocks = try parseInput()
     let caveGrid = try createCaveGrid(rocks: rocks)
     
-    printCaveGrid(caveGrid)
+   // printCaveGrid(caveGrid)
     
     throw AoCError.NotYetImplemented
   }
@@ -20,7 +20,7 @@ struct Day14: AoCPrintable {
     throw AoCError.NotYetImplemented
   }
   
-  func parseInput() throws -> [Rock] {
+  fileprivate func parseInput() throws -> [Rock] {
     try inputString
       .components(separatedBy: "\n")
       .map({ String($0) })
@@ -28,7 +28,7 @@ struct Day14: AoCPrintable {
     
   }
   
-  func createCaveGrid(rocks: [Rock]) throws -> CaveGrid {
+  fileprivate func createCaveGrid(rocks: [Rock]) throws -> CaveGrid {
     guard let highY = rocks.compactMap({ $0.highY }).sorted().last,
           let highX = rocks.compactMap({ $0.highX }).sorted().last,
           let lowY = rocks.compactMap({ $0.lowY }).sorted().first,
@@ -53,11 +53,11 @@ struct Day14: AoCPrintable {
         
         for x in firstPoint.x...secondPoint.x  {
           print("x, y: \(x) \(firstPoint.y)")
-          caveGrid[firstPoint.y][x] = .Rock
+         // caveGrid[firstPoint.y][x] = .Rock
         }
         
         for y in firstPoint.y...secondPoint.y  {
-          caveGrid[y][firstPoint.x] = .Rock
+         // caveGrid[y][firstPoint.x] = .Rock
         }
       }
     }
@@ -65,14 +65,14 @@ struct Day14: AoCPrintable {
     return caveGrid
   }
   
-  func printCaveGrid(_ caveGrid: CaveGrid) {
-    for y in 0..<caveGrid.count {
-      print(caveGrid[y].map({ $0.value }).joined())
-    }
-  }
+//  fileprivate func printCaveGrid(_ caveGrid: CaveGrid) {
+//    for y in 0..<caveGrid.count {
+//      print(caveGrid[y].map({ $0.value }).joined())
+//    }
+//  }
 }
 
-enum UnitType {
+fileprivate enum UnitType {
   case Rock
   case Sand
   case Air
@@ -86,9 +86,9 @@ enum UnitType {
   }
 }
 
-typealias CaveGrid = [Int: [Int: UnitType]] // outside is Y, inside is X
+fileprivate typealias CaveGrid = [Int: [Int: UnitType]] // outside is Y, inside is X
 
-struct GridPoint: Equatable {
+fileprivate struct GridPoint: Equatable {
   let x: Int // moves right
   let y: Int // moves down
   
@@ -108,7 +108,7 @@ struct GridPoint: Equatable {
   }
 }
 
-struct Rock {
+fileprivate struct Rock {
   let points: [GridPoint]
   
   
