@@ -49,7 +49,10 @@ struct Day17 {
     var highestY = 0
     
     for round in 1...rounds {
-      print("== Round \(round) == ")
+      if round % 1000 == 0 || round == 1 {
+        print("== Round \(round) - \(rounds - round) to go == ")
+      }
+      
       let startingGrid = grid
       let shape = shapeOrder[shapeIndex]
       let tempTowerObject = TowerCacheObject(tower: grid, directionIndex: directionIndex, shape: shape)
@@ -66,28 +69,27 @@ struct Day17 {
       
       var newRock = Rock(type: shape, floorY: highestY + 4)
       var keepGoing = true
-      printGrid(grid, newRock: newRock)
+    //   printGrid(grid, newRock: newRock)
       while keepGoing {
         if newRock.canMove(directions[directionIndex], grid: grid) {
           newRock.move(directions[directionIndex], grid: grid)
-          print("Moving in direction \(directions[directionIndex])")
-          printGrid(grid, newRock: newRock)
+          // print("Moving in direction \(directions[directionIndex])")
+          // printGrid(grid, newRock: newRock)
         } else {
-          print("Cannot move \(directions[directionIndex])")
+         // print("Cannot move \(directions[directionIndex])")
         }
 
         if newRock.canMove(.Down, grid: grid) {
           newRock.move(.Down, grid: grid)
-          print("Moving down")
-          printGrid(grid, newRock: newRock)
+          // print("Moving down")
+          // printGrid(grid, newRock: newRock)
         } else {
-          print("Cannot move down")
+          // print("Cannot move down")
           keepGoing = false
         }
         
-        if keepGoing {
-          directionIndex = (directionIndex + 1) % directions.count
-        }
+        
+        directionIndex = (directionIndex + 1) % directions.count
       }
       let oldHighY = grid.getHighestY()
       // need to modify grid to add the rock positions
@@ -113,7 +115,7 @@ struct Day17 {
     // Creates teh floor (.Rock is used as floor)
     var grid: Grid = Array(0...6).map({  Position(x: $0, y: 0) })
     
-    printGrid(grid)
+    // printGrid(grid)
     var floorY = 0
     
     for round in 1...rounds {
@@ -249,7 +251,7 @@ struct Day17 {
           row.append(".")
         }
       }
-      print(row)
+    print(row)
     }
   }
   
@@ -268,7 +270,7 @@ struct Day17 {
           row.append(grid[y][x])
         }
       }
-      print(row)
+     print(row)
     }
   }
 }
