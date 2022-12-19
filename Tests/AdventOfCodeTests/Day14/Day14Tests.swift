@@ -2,10 +2,10 @@ import XCTest
 @testable import AdventOfCode
 
 class Day14Tests: XCTestCase {
-  func test_part1_practice() {
-    let output = try? Day14(inputString: Day14Input.Practice).calculatePart1()
-    XCTAssertEqual(output, 0)
-  }
+//  func test_part1_practice() {
+//    let output = try? Day14(inputString: Day14Input.Practice).calculatePart1()
+//    XCTAssertEqual(output, 0)
+//  }
   
 //  func test_part1_input() {
 //    let output = try? Day14(inputString: Day14Input.Input).calculatePart1()
